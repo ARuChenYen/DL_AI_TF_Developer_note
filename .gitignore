@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Personal setting
+/cats_and_dogs/
+\cats_and_dogs\
+.csv
+.png
+.tar.gz
+.tsv
+.jpg
