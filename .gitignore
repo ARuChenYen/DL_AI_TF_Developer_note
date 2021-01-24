@@ -130,8 +130,7 @@ dmypy.json
 
 
 # Personal setting
-/cats_and_dogs/
-\cats_and_dogs\
+cats_and_dogs/
 .csv
 .png
 .tar.gz
