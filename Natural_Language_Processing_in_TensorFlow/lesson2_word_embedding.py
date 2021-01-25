@@ -15,7 +15,7 @@
     這時候的data是PrefetchDataset
 
 3.  用for-loop迭代出sentence跟labels
-    這邊比較複雜一點，要參考文檔 https://www.tensorflow.org/guide/tf_numpy
+    這邊比較複雜一點，要參考文檔 https://www.tensorflow.org/guide/tf_numpy#tf_numpy_and_tensorflow
     會有.numpy()是因為tensor有把numpy的一些功能寫進去，所以可以無縫的交互使用
     用了.numpy()就會把tf.tensor轉成實際上的資料讀取出來了。
     如果沒有加上.numpy則依然會是tf.tensor張量
@@ -129,12 +129,12 @@ model.compile(
 )
 
 
-# model.fit(
-#     padded_s_tr_sentence, 
-#     train_labels_ndarray,
-#     epochs=num_epochs,
-#     validation_data=(padded_s_te_sentence,test_labels_ndarray)
-# )
+model.fit(
+    padded_s_tr_sentence, 
+    train_labels_ndarray,
+    epochs=num_epochs,
+    validation_data=(padded_s_te_sentence,test_labels_ndarray)
+)
 
 '''
 五、Extra內容
