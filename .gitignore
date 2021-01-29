@@ -132,6 +132,10 @@ dmypy.json
 
 # Personal setting
 cats_and_dogs/
+Explore_the_BBC_news_archive/
+Sarcasm_Headlines_Dataset_v2.json/
+IMDB_Review/
+sign_language_mnist/
 .csv
 .png
 .tar.gz
