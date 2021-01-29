@@ -33,6 +33,10 @@
 4.  取出訓練與測試資料
     imdb['train'], imdb['test']
     因為這些資料已經pro-tokenizer了，因此不用像是lesson2那樣自己走一次
+    但如果只有像這樣 tain_data = imdb['train']取出訓練資料，後續訓練會出問題
+    在影片後的colab中，還用了其他的方法處理。
+    這部分詳細在 extra_lesson1_tf_dataset.py中說明
+
 
 5.  建立並訓練神經網路
     這部分跟之前類似，但不要用Flatten()
