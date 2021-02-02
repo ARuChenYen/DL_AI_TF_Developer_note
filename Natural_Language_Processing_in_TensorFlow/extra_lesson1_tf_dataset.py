@@ -27,9 +27,25 @@ Extra:  tf.data.Dataset
     
     d.  如果資料都已經寫進記憶體了，那麼用.from_tensor_slices()，是最方便且快速轉換成tf.tensor物件
     
+3.  padded_batch
+    這個方法是把許多連續的元素轉換成一個填充過並且批次處理的物件
+    用padded_batch(batch_size, padded_shapes, padded_values, drop_remainder)
+    用as_numpy_iterator轉成可迭代的numpy物件
+    a.  batch_size:每次批次處理的量 
+        例如 [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15]]
+        如果batch_size設為2。那麼用for-loop跑出來的會是[[1,2,3],[4,5,6]]，[[7,8,9],[10,11,12]]
+        每批兩個元素。
+    b.  drop_remainder: True or Flase，也就是上面批次處理到最後會有不完整的元素
+        決定要不要捨棄掉不用，上面的範例就會把最後的[13,14,15]捨棄掉
+    c.  padded_shapes: 填充的維度。例如上面元素是3維，設成5的話就會填充到5維
+    d.  padding_valuse: 填充值。看要用甚麼值來填充
+  
 
+4.  tf.fill(dim,value)
+    這個函數是建立一個維度為dim，但是裡面的元素都是純量value的tensor張量
+    例如tf.fill([2,2],3)，就會得到一個值為[[3,3],[3,3]]，shape=(2,2)的tf.Tensor
 
-
+5.  tf.map(mapfun,)
 '''
 
 import tensorflow as tf
@@ -82,14 +98,6 @@ def batch_test(data_source, batch_size, padded_shapes, drop_remainder):
     bat0_without_padding_shape = data_source.padded_batch(batch_size, drop_remainder=drop_remainder)
     bat1 = data_source.batch(batch_size, drop_remainder=drop_remainder)
     
-    print('-----shape of bat0_with_padding_shape-----')
-    print(bat0_with_padding_shape.numpy().shape)
-    print('-----shape of bat0_without_padding_shape-----')
-    print(bat0_without_padding_shape.numpy().shape)
-    print('-----shape of bat1 (.batch)-----')
-    print(bat1.numpy().shape)
-
-    
     print('-----bat0_with_padding_shape---')
     for element in bat0_with_padding_shape.as_numpy_iterator():
         print(element)
@@ -105,7 +113,7 @@ def batch_test(data_source, batch_size, padded_shapes, drop_remainder):
 
 tr1 = [1,2,3,]
 tr2 = [[1,2,3],[4,5,6]]
-tr3 = [[1,2],[3,4,5,6],[7,8,9]]
+tr3 = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15]]
 
 batch_size = 4
 padded_shapes = 4
