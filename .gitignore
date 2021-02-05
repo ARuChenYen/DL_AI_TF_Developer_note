@@ -131,6 +131,8 @@ dmypy.json
 
 
 # Personal setting
+.vscode
+Sentiment140/
 cats_and_dogs/
 Explore_the_BBC_news_archive/
 Sarcasm_Headlines_Dataset_v2.json/
