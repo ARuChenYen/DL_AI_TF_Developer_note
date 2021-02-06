@@ -17,4 +17,132 @@
     如果是stational的越多資料越好
     但non-stational的反而要好好選擇時間窗，越多資料反而會讓機器學習爆掉
 
+4.  課程示範了幾種特徵的產生方法
+    但是得詳細的理解一下code運作方式
+
+'''
+
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow import keras
+
+
+'''
+5.  首先寫畫圖的函數
+    a.  format決定圖示的表示與顏色，有固定設定格式可以參考文檔
+    b.  label是決定圖中線條或者標點的名稱
+    c.  legend設定就是看要不要呈現線條名稱，這個函數label是None，但如果之後有輸入label
+        那麼就用legend標示出來，並且設定字體大小為14
+    d.  start與end是把輸入的資料進行切片，預設是[0:]也就是全取的意思
+    e.  xlabel與ylabel就是顯示x軸與y軸的名稱。還可以加上plt.title()就是圖的標題
+    f.  grid(true)表示要把圖中的刻度表現出來
+    h.  整張圖畫好後，會是一個物件，要用plt.show()才會顯示出來
+'''
+def plot_series(time, series, format='-', start=0, end=None, label=None):
+    plt.plot(time[start:end], series[start:end], format, label=label)
+    plt.xlabel("Time")
+    plt.ylabel("Value")
+    if label:
+        plt.legend(fontsize=14)
+    plt.grid(True)
+
+
+'''
+
+6.  建立一個趨勢
+    給一個時間點然後乘以斜率
+    先用np.arange建立一個從零開始的序列，然後乘上斜率
+'''
+
+def trend(time, slope):
+    return time*slope
+
+time = np.arange(4*365+1) #方法類似range，建立一個從0到1460的序列
+slope = 0.1
+series = trend(time, slope)
+
+plt.figure(figsize=(10,6)) #建立一張圖，大小為(10,6)
+plot_series(time, series)
+plt.show()
+
+
+'''
+
+8.  季節性的規律變化
+    這邊要先去理解np.where的用法
+
+    a.  np.where(condition[,x,y])
+        直接來說就是如果condition為true，那麼就回傳x，否則就回傳y
+        舉例來說，x = np.arange(10)
+        condition = x > 5，結果是 array([False, False, False, False, False, False,  True,  True,  True, True])
+        因此用np.where(x>5)就會得到 (array([6, 7, 8, 9], dtype=int64),)
+    
+    b.  在二維以上的情況，若只有設定條件，並不會直接回傳值，而是元素的下標
+        例如 x = np.arange(10).reshape(2,-1)，reshape成2列，-1表示不限定大小
+        所以x變成array([[0, 1, 2, 3, 4],
+                       [5, 6, 7, 8, 9]])
+        np.where(x>5)會得到 (array([1, 1, 1, 1], dtype=int64), 
+                            array([1, 2, 3, 4], dtype=int64))
+        顯示被取出的元素在 (1,1) (1,2) (1,3) (1,4) 四個地方，對應到就是6 7 8 9
+    
+    c.  np.where(condition,x,y)最多可以設定三個參數
+        也就是(條件,符合的x處理,不符合的y處理)
+        例如 np.where(x>5,x+2,x*10) 也就是條件為x>5，符合的x都加上2，不符合條件的y都*10
+        所以輸出就變成了 array([[ 0, 10, 20, 30, 40],
+                             [50,  8,  9, 10, 11]])
+
+9.  seasonal_pattern():
+    這邊先建立一個pattern會長怎樣，使用到上述的np.where
+    設定條件為season_time <0.4，符合條件的就取 np.cos(season_time*2*np.pi)
+    其實就是取 cos(season_time*2*pi)的意思，只是套用numpy的api
+    如果不符合條件就取 1/np.exp(3*season_time)，取exp函數
+    
+10. seasonality():
+    這邊就是設定時間上重複，phrase是相位差，period是週期，可以設定要多少一個週期
+    ((time + phrase) % period) / period 就可以知道目前時間是整體週期的幾分之幾
+    也確保不會大於1
+    得到目前的時間點後，在使用函數seasonal_pattern就可以跑出現在的模式長怎樣
+
+'''
+
+def seasonal_pattern(season_time):
+    return np.where(
+        season_time <0.4,
+        np.cos(season_time * 2 * np.pi),
+        1 / np.exp(3 * season_time))
+
+
+def seasonality(time, period, amplitude=1, phrase=0):
+    season_time = ((time + phrase) % period) / period
+    return amplitude * seasonal_pattern(season_time)
+
+time = np.arange(4*365+1)
+amplitude = 40
+phrase = 0
+period = 365
+
+series = seasonality(time, period, amplitude=amplitude, phrase=phrase)
+plt.figure(figsize=(12,6))
+plot_series(time, series)
+plt.show()
+
+    
+'''
+11. 季節性變化+趨勢
+    就是把兩個函數加在一起就可以得到
+'''
+
+time = np.arange(4*365+1)
+slope = 0.05
+baseline= 10
+
+series = baseline + trend(time, slope) + seasonality(time, period, amplitude=amplitude, phrase=phrase)
+plt.figure(figsize=(12,6))
+plot_series(time, series)
+plt.show()
+
+'''
+
+12. 噪音
 '''

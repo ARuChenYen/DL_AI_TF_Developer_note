@@ -146,7 +146,7 @@ for _ in range(next_words):
     outputword = ''
     for word, index in tokenizer.word_index.items():
         if index == predicted:
-            output_word = word
+            outputword = word
             break
-    seed_text += " " + output_word
+    seed_text += " " + outputword
 print(seed_text)
