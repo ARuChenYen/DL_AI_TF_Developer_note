@@ -145,4 +145,35 @@ plt.show()
 '''
 
 12. 噪音
+    這邊會使用到np.random，隨機產生亂數
+    
+    a.  x = np.random.RandomState(seed)
+        x.randn(num)
+        產生一個偽隨機的物件 x，然後用randn方法呼叫出一共num個平均0，標準差1的數
+        RandomState產生的是用算法模擬出來的偽隨機，並且建立兩個RandomState卻使用同樣的seed
+        那麼呼叫出來的隨機數將會一樣。
+        seed是用來初始化這個物件，預設是None
+        不用rand是因為rand只會產生0-1，不會有負的
+    
+    b.  下面的範例就是先建立一個隨機數的物件然後去呼叫，隨機數數量就是time時間的個數，因此用len(time)
+        noise_level是決定噪音的震幅
+        
+    c.  讓訊號加上噪音也很簡單，用加的就可以了
 '''
+
+def white_noise(time, noise_level=1, seed=None):
+    rnd = np.random.RandomState(seed)
+    return rnd.randn(len(time)) * noise_level
+
+noise_level = 5
+seed = 42
+noise = white_noise(time, noise_level=noise_level, seed=seed)
+
+plt.figure(figsize=(12,6))
+plot_series(time, noise)
+plt.show()
+
+series += noise
+plt.figure(figsize=(12,6))
+plot_series(time, series)
+plt.show()
