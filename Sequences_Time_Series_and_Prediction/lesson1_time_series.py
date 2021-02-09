@@ -21,7 +21,7 @@
     但是得詳細的理解一下code運作方式
 
 '''
-
+#%%
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -39,6 +39,7 @@ from tensorflow import keras
     f.  grid(true)表示要把圖中的刻度表現出來
     h.  整張圖畫好後，會是一個物件，要用plt.show()才會顯示出來
 '''
+#%%
 def plot_series(time, series, format='-', start=0, end=None, label=None):
     plt.plot(time[start:end], series[start:end], format, label=label)
     plt.xlabel("Time")
@@ -54,7 +55,7 @@ def plot_series(time, series, format='-', start=0, end=None, label=None):
     給一個時間點然後乘以斜率
     先用np.arange建立一個從零開始的序列，然後乘上斜率
 '''
-
+#%%
 def trend(time, slope):
     return time*slope
 
@@ -105,7 +106,7 @@ plt.show()
     得到目前的時間點後，在使用函數seasonal_pattern就可以跑出現在的模式長怎樣
 
 '''
-
+#%%
 def seasonal_pattern(season_time):
     return np.where(
         season_time <0.4,
@@ -132,7 +133,7 @@ plt.show()
 11. 季節性變化+趨勢
     就是把兩個函數加在一起就可以得到
 '''
-
+#%%
 time = np.arange(4*365+1)
 slope = 0.05
 baseline= 10
@@ -160,7 +161,7 @@ plt.show()
         
     c.  讓訊號加上噪音也很簡單，用加的就可以了
 '''
-
+#%%
 def white_noise(time, noise_level=1, seed=None):
     rnd = np.random.RandomState(seed)
     return rnd.randn(len(time)) * noise_level
@@ -177,3 +178,16 @@ series += noise
 plt.figure(figsize=(12,6))
 plot_series(time, series)
 plt.show()
+
+#%%
+
+def autocorrealation(time, amplitude, seed=None):
+    rnd = np.random.RandomState(seed)
+    phy01 = 0.5
+    phy02 = -0.1
+    ar = rnd.randn(len(time) + 50)
+    ar[:50] = 100
+    for step in range(50, len(time)+50):
+        ar[step] += phy01*ar[step-50]
+        ar[step] += phy02*ar[step-33]
+    return ar[50:]*amplitude
